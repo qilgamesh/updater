@@ -1,7 +1,11 @@
-package update;
+package updater;
 
 import java.awt.*;
 import java.io.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 
 /**
@@ -9,7 +13,9 @@ import java.io.*;
  */
 public class Main {
 
-    private final String root = "update/";
+    // Временная папка с новой версией
+    private final String root = "updater/";
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String args[]) {
         EventQueue.invokeLater(Main::new);
@@ -17,12 +23,27 @@ public class Main {
 
     private Main() {
         try {
+            initLogger();
+
             copyFiles(new File(root), new File("").getAbsolutePath());
+
             cleanup();
             launch();
-        } catch (Exception ex) {
-            System.out.println("error");
+        } catch (Exception | AssertionError ex) {
+            logger.log(Level.SEVERE, "Failed to update: ", ex);
         }
+    }
+
+    private void initLogger() throws IOException {
+
+        File logDir = new File("logs");
+
+        if (!logDir.exists()) logDir.mkdir();
+
+        FileHandler logFile = new FileHandler("logs/updater.log", true);
+        logFile.setFormatter(new SimpleFormatter());
+
+        logger.addHandler(logFile);
     }
 
     private void launch() {
@@ -32,7 +53,7 @@ public class Main {
         try {
             Runtime.getRuntime().exec(run);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to launch updated application: ", ex);
         }
 
         System.exit(0);
@@ -48,6 +69,8 @@ public class Main {
 
         File[] files = f.listFiles();
 
+        assert files != null;
+
         for (File ff : files) {
             if (ff.isDirectory()) {
                 remove(ff);
@@ -61,6 +84,8 @@ public class Main {
     private void copyFiles(File f, String dir) throws IOException {
 
         File[] files = f.listFiles();
+
+        if (files == null) throw new AssertionError();
 
         for (File ff : files) {
             if (ff.isDirectory()) {
