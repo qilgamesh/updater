@@ -2,10 +2,9 @@ package updater;
 
 import java.awt.*;
 import java.io.*;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.*;
 
 
 /**
@@ -24,7 +23,7 @@ public class Main {
     private Main() {
         try {
             initLogger();
-
+            logger.info("Start updater");
             copyFiles(new File(root), new File("").getAbsolutePath());
 
             cleanup();
@@ -41,7 +40,16 @@ public class Main {
         if (!logDir.exists()) logDir.mkdir();
 
         FileHandler logFile = new FileHandler("logs/updater.log", true);
-        logFile.setFormatter(new SimpleFormatter());
+        logFile.setFormatter(new Formatter() {
+            public String format(LogRecord record) {
+                return String.format("%s [%s] %s.%s  - %s\n",
+                        SimpleDateFormat.getInstance().format(new Date()),
+                        record.getLevel(),
+                        record.getSourceClassName(),
+                        record.getSourceMethodName(),
+                        record.getMessage());
+            }
+        });
 
         logger.addHandler(logFile);
     }
