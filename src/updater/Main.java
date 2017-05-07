@@ -13,7 +13,7 @@ import java.util.logging.*;
 public class Main {
 
     // Временная папка с новой версией
-    private final String root = "updater/";
+    private final String root = "update/";
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String args[]) {
@@ -23,7 +23,7 @@ public class Main {
     private Main() {
         try {
             initLogger();
-            logger.info("Start updater");
+            logger.info("Updater started. Start copy files");
             copyFiles(new File(root), new File("").getAbsolutePath());
 
             cleanup();
@@ -56,6 +56,8 @@ public class Main {
 
     private void launch() {
 
+        logger.info("Launch updated application");
+
         String[] run = {"java", "-jar", "tickets.jar"};
 
         try {
@@ -64,10 +66,14 @@ public class Main {
             logger.log(Level.SEVERE, "Failed to launch updated application: ", ex);
         }
 
+        logger.info("Updated close");
+
         System.exit(0);
     }
 
     private void cleanup() {
+
+        logger.info("Cleanup temporary files");
 
         remove(new File(root));
         new File(root).delete();
