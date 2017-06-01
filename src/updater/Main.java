@@ -61,7 +61,11 @@ public class Main {
         String[] run = {"java", "-jar", "tickets.jar"};
 
         try {
-            Runtime.getRuntime().exec(run);
+            if (new File("AirSpace.exe").exists()) {
+                Runtime.getRuntime().exec("AirSpace.exe");
+            } else {
+                Runtime.getRuntime().exec(run);
+            }
         } catch (Exception ex) {
             logger.log(Level.SEVERE, "Failed to launch updated application: ", ex);
         }
