@@ -58,7 +58,7 @@ public class Main {
 
         logger.info("Launch updated application");
 
-        String[] run = {"java", "-jar", "tickets.jar"};
+        String[] run = {"java", "-jar", "AirSpace.jar"};
 
         try {
             if (new File("AirSpace.exe").exists()) {
